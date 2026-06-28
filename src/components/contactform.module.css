@@ -1,0 +1,16 @@
+/* src\components\contactform.module.css */
+
+
+.formflex {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.formblock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 500px;
+}

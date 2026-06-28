@@ -1,0 +1,145 @@
+---
+
+// news\category\[cat_slug]\[page].astro カテゴリー一覧ページ
+
+import Layout from '../../../../layouts/Layout.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+
+import { getKobashiNews } from '../../../../library/micro';
+
+const { cat_slug } = Astro.params; //追加したお
+
+const currentPage = Number(Astro.params.page) || 1;
+const limit = 5;
+const offset = (currentPage - 1)*limit
+
+const Yamata_news = await getKobashiNews({
+    limit,
+    fields : ["title","id","category"],
+    offset,
+    filters: `category[equals]${cat_slug}` //追加したお
+    
+})
+
+// 総ページ数
+const totalPages = Math.ceil(Yamata_news.totalCount/limit);
+
+// ページ番号
+const pageNumbers = Array.from({length:totalPages},(_,i)=>i+1).filter(p=>{
+    if(p===1 || p===totalPages)return true;
+    if(currentPage<=3)return p <=4;
+    if(currentPage>=totalPages-2)return p >= totalPages-3;
+    return Math.abs(p-currentPage)<=1;
+})
+
+// カテゴリーリストリンク
+import { getKobashiCategories } from '../../../../library/micro';
+const Yamata_category_list = await getKobashiCategories();
+
+---
+
+
+<Layout title="カテゴリー別一覧ページ">
+    <Header />
+    <main>
+    <h2>{Yamata_news.contents[0]?.category?.name}のカテゴリー一覧</h2>
+    <div>
+        <ul>
+            {Yamata_news.contents.map((item)=>(
+                <li>{item.title}｜{item.category?.name}</li>
+            ))}
+        </ul>
+    </div>
+     
+    <!-- 件数 -->
+    <br>
+     <hr>
+     <br>
+    <div class="pagination-count">
+        {offset+1}件 ~ {offset + Yamata_news.contents.length}件/ 全{Yamata_news.totalCount}件
+    </div>
+    
+     <!-- ページネーション -->
+    <div class="paginateion-wrap">
+        
+        
+        {currentPage>1?(
+            <a href={`/news/category/${cat_slug}/${currentPage-1}`}>前のページ</a>
+        ):(
+            <span>前のページはないです</span>
+        )}
+        
+        {pageNumbers.map((p,index)=>(
+            <span>
+                {index > 0 && p - pageNumbers[index-1]> 1 && <span>...</span>}
+                <a href={`/news/category/${cat_slug}/${p}`} class={currentPage === p ? "page-number active":"page-number"}>
+                {p}
+                </a>
+            </span>
+        ))
+        }
+        
+        {currentPage < totalPages? (
+            <a href={`/news/category/${cat_slug}/${currentPage+1}`}>次のページ</a>
+            ):(
+            <span>前のページはないです</span>
+        )}
+    
+    </div>
+    
+    <!-- カテゴリーリストリンク -->
+    <div>
+        <br>
+        <hr>
+        <br>
+        <ul>
+        {Yamata_category_list.contents.map((item)=>(
+            <li>
+                <a href={`/news/category/${item.id}/1`}>{item.name}</a>
+            </li>
+        ))}
+        </ul>
+    </div>
+
+    
+    </main>
+    <Footer />
+</Layout>
+
+<style>
+    
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.paginateion-wrap {
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.yamata {
+  color: black;
+}
+
+.page-number.active {
+  color: red;
+  font-weight: bold;
+}
+
+.pagination-count{
+    margin-top: 20px;
+    text-align: center;
+} 
+    
+</style>
+
+
+
+
+
+
+

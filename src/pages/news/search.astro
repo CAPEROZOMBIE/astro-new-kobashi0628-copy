@@ -1,0 +1,44 @@
+---
+// src\pages\news\search.astro
+
+import BlogSearch from "../../components/BlogSearch";
+import SearchButton from "../../components/SearchButton";
+
+// 基本
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+---
+
+
+<Layout>
+    <Header />
+  <main>
+    
+    
+    <h2>検索結果</h2>
+
+    <SearchButton client:visible />
+    <BlogSearch client:only="react" />
+
+        <br><hr><br>
+        <div><a href="/news/1">ニュース一覧へ</a></div>
+
+        <br>
+
+        <hr>
+        <br>
+        <div><a href="/">トップへ</a></div>
+
+  </main>
+  <Footer />
+</Layout>
+
+
+<style>
+    main {
+        width: 60%;
+        margin: 0 auto;
+    }
+</style>

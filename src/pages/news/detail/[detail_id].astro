@@ -1,0 +1,111 @@
+---
+
+// \pages\news\detail\[detail_id].astro 詳細ページ
+
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+
+
+import { Image } from 'astro:assets'; // webp
+
+import { getKobashiNewsDetail } from '../../../library/micro';
+
+import { getKobashiNews } from '../../../library/micro'; //前後のページの為
+
+
+const { detail_id } = Astro.params;
+const Yamata_detaile = await getKobashiNewsDetail(detail_id as string)
+
+
+// 前後のページ
+
+const list = await getKobashiNews({
+  fields: ["id"],
+  limit: 100
+});
+
+const index = list.contents.findIndex(item => item.id === detail_id);
+
+const prev = list.contents[index - 1] ?? null;
+const next = list.contents[index + 1] ?? null;
+
+---
+
+<Layout title="ニュース詳細">
+    <Header />
+    <main>
+        <h2>ニュース詳細detail_idだお</h2>
+        <div>
+            {Yamata_detaile.title}
+        </div>
+        
+        {Yamata_detaile.thumbnail && (
+        <figure>
+            <Image 
+            src={Yamata_detaile.thumbnail.url} 
+            alt={Yamata_detaile.title} 
+            width={700} 
+            inferSize={true}
+            fit="cover"
+            position="top"
+            />
+        </figure>
+        )}
+        
+        <div set:html={Yamata_detaile.content}>
+        </div>
+        
+        <!-- 前後のページ -->
+         <br>
+         <hr>
+         <br>
+         <div>
+            {prev ? (
+                <a href={`/news/detail/${prev.id}`}>前の記事</a>
+            ) : (
+                <span>前の記事はありません</span>
+            )}
+            ｜
+            {next ? (
+                <a href={`/news/detail/${next.id}`}>次の記事</a>
+            ) : (
+                <span>次の記事はありません</span>
+            )}
+        </div>
+        
+    </main>
+    <Footer />
+</Layout>
+
+
+
+
+<style>
+    
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+figure {
+    max-width: 700px;
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+figure img {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    /* object-fit: cover;
+    object-position: center 0%; */
+}
+    
+</style>
+
+
+
+
+

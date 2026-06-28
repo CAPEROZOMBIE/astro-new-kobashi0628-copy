@@ -1,0 +1,25 @@
+---
+
+// src\components\Nav.astro
+const { footerOnly } = Astro.props;
+
+---
+
+<nav class={footerOnly}>
+<!-- <nav> -->
+    <a href="/">トップページ</a>
+    <a href="/about">アバウトページへ</a>
+    <a href="/news/1">ニュースページへ</a>
+    <a href="/contact">コンタクトページ</a>
+</nav>
+
+<style>
+   nav {
+      display: flex;
+      gap: 30px;
+   }
+   
+    .footerOnlyClass {
+        justify-content: center;
+    }
+</style>

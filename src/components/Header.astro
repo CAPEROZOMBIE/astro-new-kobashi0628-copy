@@ -1,0 +1,40 @@
+---
+
+// src\components\Header.astro
+
+import Nav02 from "./Nav02";
+
+import { Image } from 'astro:assets';
+import logo_canon from '../assets/logo_1956.png';
+
+---
+
+<header class="center">
+   <h1>
+      <a href="/">
+         <Image src={logo_canon} alt="Kobashi ロゴ" width={160} />
+      </a>
+   </h1>
+   <!-- <Nav /> -->
+   <Nav02 client:load/>
+</header>
+
+<style>
+    .center {
+        margin: 0 auto;
+        max-width: 800px;
+    }
+    
+    
+   header {
+      padding: 20px 0;
+   }
+
+   h1 {
+      margin: 0;
+   }
+
+   h1 img {
+      width: 160px;
+   }
+</style>

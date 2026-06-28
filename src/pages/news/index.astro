@@ -1,0 +1,40 @@
+---
+
+// src\pages\news\index.astro
+
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+import { getKobashiNews } from '../../library/micro';
+
+const Yamata_news = await getKobashiNews({
+    limit:10
+});
+
+console.log(Yamata_news)
+
+---
+
+<Layout title="ニュース一覧">
+    <Header />
+    <main>
+        <h2>ニュース一覧ページ</h2>
+        
+        <div>
+            <ul>
+                {Yamata_news.contents.map((item)=>(
+                    <li>{item.title}</li>
+                ))}
+            </ul>
+            </div>
+    </main>
+    <Footer />
+</Layout>
+
+<style>
+    main {
+        max-width: 800px;
+        margin:  0 auto;
+    }
+</style>

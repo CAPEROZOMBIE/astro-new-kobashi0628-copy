@@ -1,0 +1,164 @@
+---
+// src/pages/news/archive/[month_id].astro 月別ページ
+
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+
+import { getKobashiNews } from '../../../library/micro';
+import { getKobashiAllNews } from '../../../library/micro'; // 第三段階へ ▼
+
+const { month_id } = Astro.params; 
+
+const Yamata_news = await getKobashiNews({
+    limit:31,
+    fields : ["title","id","category"],
+    offset:0,
+    filters: `publishedAt[begins_with]${month_id}`
+})
+
+
+
+
+// 第三段階へ ▼
+
+// (1)全記事取得（上で追加）
+
+const allnews = await getKobashiAllNews({
+  fields: ["publishedAt"]
+});
+
+// (2)月リスト作成
+
+const monthSet = new Set<string>();
+
+allnews.forEach((item) => {
+  if (!item.publishedAt) return;
+  const d = new Date(item.publishedAt);
+  const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,"0")}`;
+  monthSet.add(ym);
+});
+
+const monthList = Array.from(monthSet).sort((a,b)=>b.localeCompare(a));
+
+// (3)前後の月
+
+const currentIndex = monthList.indexOf(month_id as string);
+
+const prevMonth = monthList[currentIndex + 1];
+const nextMonth = monthList[currentIndex - 1];
+
+
+// (4)アーカイブ（件数付き）
+
+const archives: Record<string, number> = {};
+
+allnews.forEach((item) => {
+  if (!item.publishedAt) return;
+  const d = new Date(item.publishedAt);
+  const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,"0")}`;
+  archives[key] = (archives[key] || 0) + 1;
+});
+
+const archiveList = Object.entries(archives).sort((a,b)=>b[0].localeCompare(a[0]));
+
+
+---
+
+
+<Layout title="月別一覧">
+    <Header />
+    <main>
+        <h2>{month_id}月別一覧</h2>
+    <div>
+        <ul>
+            {Yamata_news.contents.map((item)=>(
+                <li>
+                    <a href={`/news/detail/${item.id}`}>{item.title}</a>
+                    ｜
+                    <a href={`/news/category/${item.category?.id}/1`}>{item.category?.name}</a>
+                </li>
+            ))}
+        </ul>
+    </div>
+    
+    <!-- 第三段階 ▼ -->
+     
+     <!-- (5)前後の月 -->
+      <br>
+      <hr>
+      <br>
+    <nav>
+        {nextMonth ? (
+            <a href={`/news/archive/${nextMonth}`}>前の月へ</a>
+        ) : (
+            <span>前の月はありません</span>
+        )}
+        ｜
+        {prevMonth ? (
+            <a href={`/news/archive/${prevMonth}`}>次の月へ</a>
+        ) : (
+            <span>次の月はありません</span>
+        )}
+    </nav>
+    
+    
+
+<!-- (6)アーカイブ -->
+       <br>
+      <hr>
+      <br>
+    <ul>
+        {archiveList.map(([month, count]) => {
+            const [y, m] = month.split("-");
+            return (
+            <li>
+                <a href={`/news/archive/${month}`}>
+                {y}年{m}月({count})
+                </a>
+            </li>
+            );
+        })}
+    </ul>
+  
+     
+    </main>
+    <Footer />
+</Layout>
+
+<style>
+    
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.paginateion-wrap {
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.yamata {
+  color: black;
+}
+
+.page-number.active {
+  color: red;
+  font-weight: bold;
+}
+
+.pagination-count{
+    margin-top: 20px;
+    text-align: center;
+} 
+    
+</style>
+
+
+
+
+
+
+

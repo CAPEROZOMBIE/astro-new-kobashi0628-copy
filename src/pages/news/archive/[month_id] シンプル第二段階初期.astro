@@ -1,0 +1,78 @@
+---
+// src/pages/news/archive/[month_id].astro 月別ページ
+
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+
+import { getKobashiNews } from '../../../library/micro';
+
+const { month_id } = Astro.params; 
+
+const Yamata_news = await getKobashiNews({
+    limit:2,
+    fields : ["title","id","category"],
+    offset:0,
+    filters: `publishedAt[begins_with]${month_id}`
+})
+
+
+---
+
+
+<Layout title="月別一覧">
+    <Header />
+    <main>
+        <h2>月別一覧</h2>
+    <div>
+        <ul>
+            {Yamata_news.contents.map((item)=>(
+                <li>
+                    <a href={`/news/detail/${item.id}`}>{item.title}</a>
+                    ｜
+                    <a href={`/news/category/${item.category?.id}/1`}>{item.category?.name}</a>
+                </li>
+            ))}
+        </ul>
+    </div>
+     
+    </main>
+    <Footer />
+</Layout>
+
+<style>
+    
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.paginateion-wrap {
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.yamata {
+  color: black;
+}
+
+.page-number.active {
+  color: red;
+  font-weight: bold;
+}
+
+.pagination-count{
+    margin-top: 20px;
+    text-align: center;
+} 
+    
+</style>
+
+
+
+
+
+
+

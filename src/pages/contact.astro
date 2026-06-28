@@ -1,0 +1,28 @@
+---
+
+// src\pages\contact.astro
+
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ContactForm from "../components/ContactForm";
+
+---
+
+
+<Layout>
+    <Header />
+    <main>
+        <h2>問い合わせフォーム</h2>
+        <ContactForm client:load />
+    </main>
+    <Footer />
+</Layout>
+
+
+<style>
+    main {
+        width: 800px;
+        margin: 0 auto;
+    }
+</style>

@@ -1,0 +1,43 @@
+---
+
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+
+import { getKobashiNewsDetail } from '../../../library/micro';
+
+const { detail_id } = Astro.params;
+const Yamata_detaile = await getKobashiNewsDetail(detail_id)
+console.log(detail_id)
+
+---
+
+<Layout title="ニュース詳細だお">
+    <Header />
+    <main>
+        <h2>ニュース詳細インデックスの方</h2>
+        <div>
+            {Yamata_detaile.title}
+        </div>
+    </main>
+    <Footer />
+</Layout>
+
+
+
+
+<style>
+    
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+    
+</style>
+
+
+
+
+
+
+
