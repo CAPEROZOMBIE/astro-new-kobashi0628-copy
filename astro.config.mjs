@@ -9,7 +9,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
 integrations: [react()], //検索機能,ハンバーガーメニュー
-  output: 'server',
+//   output: 'server',
 //   adapter: node({
 //     mode: 'standalone'
 //   }),
